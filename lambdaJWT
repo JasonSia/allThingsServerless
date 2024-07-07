@@ -1,0 +1,18 @@
+Lambda Layers
+
+Lambda Layers store your supplementary data and code away from the main lambda code.
+
+However building this lambda layers can cause issues due to OS mismatch, adding in dependencies not suitable for Lambda.
+
+With that it is always best use SAM tools to build the layers.
+
+One example is creating Lambda Authorisers for verifying JWT. For python 3.12 requires requests, pyjwt and cryptography.
+This can be done by utilising the command below
+
+*requirements docker installed
+
+
+mkdir -p python/lib/python3.12/site-packages 
+echo 'requests\npyjwt\ncryptography' > requirements.txt 
+docker run -v "$PWD":/var/task "public.ecr.aws/sam/build-python3.12:latest" /bin/sh -c "pip install -r requirements.txt -t python/lib/python3.12/site-packages/; exit"
+zip -r lambda_function.zip .
